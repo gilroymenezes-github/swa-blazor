@@ -1,0 +1,47 @@
+﻿@page "/names"
+@inject HttpClient Http
+
+@using BlazorApp.Shared
+
+<h3>Names</h3>
+
+@if (names == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var name in names)
+            {
+                <tr>
+                    <td>@name.Id</td>
+                    <td>@name.Field</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private NameEntity[] names = new NameEntity[] { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            names= await Http.GetFromJsonAsync<NameEntity[]>("/api/names") ?? new NameEntity[] { };
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+    }
+}
