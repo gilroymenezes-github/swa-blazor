@@ -1,0 +1,13 @@
+﻿<AuthorizeView>
+    <Authorized>
+        Hello, @context?.User?.Identity?.Name!
+        <a href="/.auth/logout?post_logout_redirect_uri=/">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="/auth-providers">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

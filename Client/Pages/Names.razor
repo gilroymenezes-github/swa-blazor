@@ -1,7 +1,9 @@
 ﻿@page "/names"
-@inject HttpClient Http
-
 @using BlazorApp.Shared
+@using Microsoft.AspNetCore.Authorization
+
+@inject HttpClient Http
+@attribute [Authorize]
 
 <h3>Names</h3>
 

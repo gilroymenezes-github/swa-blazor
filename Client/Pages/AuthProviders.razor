@@ -1,0 +1,30 @@
+﻿@page "/auth-providers"
+
+@{
+    var providers = new Dictionary<string, string>
+    {
+        { "aad", "Azure" },
+        { "google", "Google" },
+        { "github", "GitHub" }
+    };
+}
+
+<div class="container">
+    <div class="row">
+    @foreach(var provider in providers)
+    {
+    
+        <div class="col-md-3">
+            <a class="btn btn-outline-primary btn-social btn-@provider.Key" href="/.auth/login/@provider.Key">
+                <span class="fab fa-@provider.Key"></span> Sign in with @provider.Value
+            </a>
+        </div>
+    
+    }
+    </div>    
+</div>
+
+
+@code {
+
+}
