@@ -8,7 +8,7 @@ namespace BlazorApp.Client.Auth
     public class SwaAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly IConfiguration? _configuration;
-        private readonly HttpClient? _httpClient;
+        private readonly HttpClient _httpClient;
 
         public SwaAuthenticationStateProvider(IConfiguration configuration, IWebAssemblyHostEnvironment environment)
         {
@@ -19,21 +19,21 @@ namespace BlazorApp.Client.Auth
         {
             try
             {
-                var authDataUrl = _configuration.GetValue<string>("Authentication:Swa:AuthenticationDataUrl", "/.auth/me");
-                var data = await _httpClient?.GetFromJsonAsync<AuthenticationModel>(authDataUrl);
+                var data = await _httpClient.GetFromJsonAsync<AuthenticationModel>("/.auth/me");
 
                 var principal = data?.ClientPrincipal;
 
                 if (principal is null) return new AuthenticationState(new ClaimsPrincipal());
                 
                 principal.UserRoles = principal?.UserRoles?.Except(new string[] { "anonymous" }, StringComparer.CurrentCultureIgnoreCase);
-                
-                if (!principal.UserRoles.Any())  return new AuthenticationState(new ClaimsPrincipal());
 
-                var identity = new ClaimsIdentity(principal.IdentityProvider);
-                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal.UserId));
-                identity.AddClaim(new Claim(ClaimTypes.Name, principal.UserDetails));
-                identity.AddClaims(principal.UserRoles.Select(r => new Claim(ClaimTypes.Role, r)));
+                var hasRoles = principal?.UserRoles?.Any() ?? false;
+                if (!hasRoles) return new AuthenticationState(new ClaimsPrincipal());
+
+                var identity = new ClaimsIdentity(principal?.IdentityProvider);
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal?.UserId ?? String.Empty));
+                identity.AddClaim(new Claim(ClaimTypes.Name, principal?.UserDetails ?? String.Empty));
+                identity.AddClaims(principal?.UserRoles?.Select(r => new Claim(ClaimTypes.Role, r)) ?? new List<Claim>());
 
                 return new AuthenticationState(new ClaimsPrincipal(identity));
             }

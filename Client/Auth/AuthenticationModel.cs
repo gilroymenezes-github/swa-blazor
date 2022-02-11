@@ -2,6 +2,6 @@
 {
     public class AuthenticationModel
     {
-        public ClientPrincipal? ClientPrincipal { get; set; }
+        public ClientPrincipal ClientPrincipal { get; set; }
     }
 }
