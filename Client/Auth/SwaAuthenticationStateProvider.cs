@@ -21,10 +21,10 @@ namespace BlazorApp.Client.Auth
             {
                 var data = await _httpClient.GetFromJsonAsync<AuthenticationModel>("/.auth/me");
 
-                var principal = data?.ClientPrincipal;
+                var principal = data?.ClientPrincipal ?? new ClientPrincipal();
 
                 if (principal is null) return new AuthenticationState(new ClaimsPrincipal());
-                
+
                 principal.UserRoles = principal?.UserRoles?.Except(new string[] { "anonymous" }, StringComparer.CurrentCultureIgnoreCase);
 
                 var hasRoles = principal?.UserRoles?.Any() ?? false;
@@ -34,10 +34,13 @@ namespace BlazorApp.Client.Auth
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal?.UserId ?? String.Empty));
                 identity.AddClaim(new Claim(ClaimTypes.Name, principal?.UserDetails ?? String.Empty));
                 identity.AddClaims(principal?.UserRoles?.Select(r => new Claim(ClaimTypes.Role, r)) ?? new List<Claim>());
+                identity.AddClaim(new Claim(ClaimTypes.Role, "Administrator"));
+
+                var roles = await _httpClient.GetFromJsonAsync<string[]>("/api/roles");
 
                 return new AuthenticationState(new ClaimsPrincipal(identity));
             }
-            catch (Exception ex)
+            catch 
             {
                 return new AuthenticationState(new ClaimsPrincipal());
             }

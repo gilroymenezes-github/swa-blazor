@@ -31,10 +31,18 @@ else
         </tbody>
     </table>
 }
+<a class="btn btn-primary" @onclick=@ClickHandler>Roles</a>
+<ul>
+    @foreach(var role in roles)
+    {
+        <li>@role</li>
+    }
+</ul>
+
 
 @code {
     private NameEntity[] names = new NameEntity[] { };
-
+    private string[] roles = new string[] { };
     protected override async Task OnInitializedAsync()
     {
         try
@@ -45,5 +53,11 @@ else
         {
             Console.WriteLine(ex.ToString());
         }
+    }
+
+    protected async Task ClickHandler(MouseEventArgs e)
+    {
+        roles = await Http.GetFromJsonAsync<string[]>("/api/roles") ?? new string[] { };
+        StateHasChanged();
     }
 }
