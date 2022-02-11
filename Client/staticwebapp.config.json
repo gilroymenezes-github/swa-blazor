@@ -1,9 +1,19 @@
 {
-  "globalHeaders": {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
-  },
   "navigationFallback": {
     "rewrite": "/index.html"
-  }
+  },
+  "routes": [
+    {
+      "route": "/names",
+      "allowedRoles": [ "authenticated" ]
+    },
+    {
+      "route": "/api/names",
+      "allowedRoles": [ "authenticated" ]
+    },
+    {
+      "route": "/.auth/login/twitter",
+      "statusCode": 404
+    }
+  ]
 }
