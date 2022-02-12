@@ -35,14 +35,16 @@ else
 <ul>
     @foreach(var role in roles)
     {
-        <li>@role</li>
+        <li>@role.Item1 : @role.Item2</li>
     }
 </ul>
 
 
 @code {
+    [CascadingParameter] private Task<AuthenticationState>? authenticationStateTask { get; set; } 
+
     private NameEntity[] names = new NameEntity[] { };
-    private string[] roles = new string[] { };
+    private (string, string)[] roles = new (string, string)[] { };
     protected override async Task OnInitializedAsync()
     {
         try
@@ -57,7 +59,9 @@ else
 
     protected async Task ClickHandler(MouseEventArgs e)
     {
-        roles = await Http.GetFromJsonAsync<string[]>("/api/roles") ?? new string[] { };
+        if (authenticationStateTask is null) return;
+        var authState = await authenticationStateTask;
+        roles = authState.User.Claims.Select(c => (c.Value.ToString(), c.Type.ToString())).ToArray();
         StateHasChanged();
     }
 }

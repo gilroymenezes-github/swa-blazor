@@ -47,7 +47,7 @@ namespace BlazorApp.Api
                 var hasRoles = principal?.UserRoles?.Any() ?? false;
                 if (!hasRoles) return new OkObjectResult(new string[] { });
 
-                if (principal.UserDetails.Contains("gilroymenezes")) roles.Add("Administrator");
+                if (principal.UserDetails.Contains("gilroymenezes")) roles.Add("administrator");
                 foreach(var role in principal.UserRoles)
                 {
                     roles.Add(role);

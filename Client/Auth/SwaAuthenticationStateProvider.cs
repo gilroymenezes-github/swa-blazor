@@ -33,10 +33,9 @@ namespace BlazorApp.Client.Auth
                 var identity = new ClaimsIdentity(principal?.IdentityProvider);
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, principal?.UserId ?? String.Empty));
                 identity.AddClaim(new Claim(ClaimTypes.Name, principal?.UserDetails ?? String.Empty));
-                identity.AddClaims(principal?.UserRoles?.Select(r => new Claim(ClaimTypes.Role, r)) ?? new List<Claim>());
-                identity.AddClaim(new Claim(ClaimTypes.Role, "Administrator"));
-
-                var roles = await _httpClient.GetFromJsonAsync<string[]>("/api/roles");
+                
+                var roles = await _httpClient.GetFromJsonAsync<string[]>("/api/roles") ?? new string[] { };
+                identity.AddClaims(roles.Select(r => new Claim(ClaimTypes.Role, r)));
 
                 return new AuthenticationState(new ClaimsPrincipal(identity));
             }
